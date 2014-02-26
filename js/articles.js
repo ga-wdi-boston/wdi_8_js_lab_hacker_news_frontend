@@ -82,6 +82,7 @@ AJAXer.actionLinks = function() {
     .fail(function(response) {
       AJAXer.reportError(response);
     });
+    return false;
   }
 }
 
@@ -111,7 +112,7 @@ AJAXer.newArticle = function() {
   .always(function() {
     console.log("complete");
   });
-
+  return false;
 }
 
 AJAXer.reportError = function(response) {
