@@ -65,15 +65,9 @@ AJAXer.actionLinks = function() {
           currentVote = toBeUpdated.currentVote,
           amtToChange;
 
-      if (currentVote === response.vote.direction) {
-        return false;
-      } else if (currentVote !== "neutral" || currentVote === null) {
-        amtToChange = (response.vote.direction === "up") ? 2 : -2;
-      } else {
-        amtToChange = (response.vote.direction === "up") ? 1 : -1;
-      }
-      toBeUpdated.score += amtToChange;
+      toBeUpdated.score = response.vote.votable_score;
       toBeUpdated.currentVote = response.vote.direction;
+
       AJAXer.renderAll();
 
       //toBeUpdated.insertSelf();
