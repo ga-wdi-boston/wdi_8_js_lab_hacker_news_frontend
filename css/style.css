@@ -1,1 +1,4 @@
 /* Put any styles you'd like to apply in here */
+li {
+	padding: 10px;
+}

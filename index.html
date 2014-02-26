@@ -9,6 +9,19 @@
   <script src="./js/main.js"></script>
 </head>
 <body>
+	<div>
+		<form id='new-article' action="http://haxor-news-json.herokuapp.com/articles">
+			<input type="text" id="title" placeholder="title">
+			<input type="text" id="url" placeholder="url">
+			<input type="submit">
+		</form>
+	</div>
 
+	<div id="articles-container">
+		<button id="reload">Reload</button>
+		<ol id="articles-list">
+			<!-- Artciles go here -->
+		</ol>
+	</div>
 </body>
 </html>
