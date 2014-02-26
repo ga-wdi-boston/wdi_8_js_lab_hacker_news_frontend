@@ -118,6 +118,7 @@ AJAXer.newArticle = function() {
 AJAXer.reportError = function(response) {
   var errors   = response.responseJSON.errors,
       $errorDiv = $("#errors");
+      $errorDiv.empty();
   $.each(errors, function(key, value) {
     $.each(value, function(index, error) {
       $errorDiv.append($("<h3>" + key + " error: " + error + "</h3>"));
