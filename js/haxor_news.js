@@ -90,7 +90,9 @@ HaxorNews.addArticle = function(event) {
 
 HaxorNews.voteUpArticle = function(event) {
   var index = $(event.target).parent().parent().index(),
-    article;
+    article,
+    $article,
+    newIndex;
   event.preventDefault();
 
   $('p.notice, p.alert').html('');
@@ -111,6 +113,13 @@ HaxorNews.voteUpArticle = function(event) {
     article.score = response.vote.votable_score;
     HaxorNews.articles.sort(HaxorNews.compare);
     HaxorNews.renderArticles(HaxorNews.articles);
+
+    // move window to follow article
+    newIndex = HaxorNews.articles.indexOf(article);
+    $article = $('#article_list div').eq(newIndex);
+    $('html, body').animate({
+            scrollTop: $article.offset().top
+        }, 2000);
   }).fail(function(response){
     $('p.alert').html(HaxorNews.printError(response.responseJSON.errors));
   });
@@ -120,7 +129,9 @@ HaxorNews.voteUpArticle = function(event) {
 
 HaxorNews.voteDownArticle = function(event) {
   var index = $(event.target).parent().parent().index(),
-    article;
+    article,
+    $article,
+    newIndex;
   event.preventDefault();
 
   $('p.notice, p.alert').html('');
@@ -141,6 +152,12 @@ HaxorNews.voteDownArticle = function(event) {
     article.score = response.vote.votable_score;
     HaxorNews.articles.sort(HaxorNews.compare);
     HaxorNews.renderArticles(HaxorNews.articles);
+    // move window to follow article
+    newIndex = HaxorNews.articles.indexOf(article);
+    $article = $('#article_list div').eq(newIndex);
+    $('html, body').animate({
+            scrollTop: $article.offset().top
+        }, 2000);
   }).fail(function(response){
     $('p.alert').html(HaxorNews.printError(response.responseJSON.errors));
   });
