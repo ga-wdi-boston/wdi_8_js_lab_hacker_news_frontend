@@ -3,8 +3,11 @@ var HaxorNews = {
 };
 
 HaxorNews.init = function() {
-  $('#get_articles').click(HaxorNews.callArticles.bind(this));
+  $('#get_articles').click(HaxorNews.callArticles);
+  $('#get_articles').trigger('click');
   $('#article_list').click(HaxorNews.showComment); // needs to be router
+  $('#submit-show').click(HaxorNews.submitShow);
+  $('#new_article').submit(HaxorNews.addArticle);
 };
 
 HaxorNews.callArticles = function(){
@@ -15,6 +18,7 @@ HaxorNews.callArticles = function(){
     dataType: 'JSON',
     data: { backdoor_user_id: 5 },
     success: function(response){
+      HaxorNews.articles = response.articles;
       HaxorNews.renderArticles(response.articles);
     }
   });
@@ -22,16 +26,19 @@ HaxorNews.callArticles = function(){
 
 
 HaxorNews.renderArticles = function(articles){
-  var length = articles.length, i = 0;
+  var length = articles.length, i = 0,
+    $list = $('#article_list');
+
+  $list.empty();
+  $('p.notice p.alert').html('');
 
   for (; i < length; ) {
-    this.renderArticle(articles[i]);
+    $list.append(this.renderArticle(articles[i]));
     i = i + 1;
   }
 };
 
 HaxorNews.renderArticle = function(article){
-  console.log(article);
   var htmlString,
     now = new Date(),
     createdAt = new Date(article.created_at),
@@ -45,8 +52,69 @@ HaxorNews.renderArticle = function(article){
     + '<a href="' + HaxorNews.rootUrl + 'articles/'+ article.id +'/comments" id="comments">' + article.comments_count + ' comments</a></p>';
   $article = $('<div class="article">').append(htmlString).append($('<div class="comment_list">'));
 
-  $('#article_list').append($article);
+  return $article;
 };
+
+HaxorNews.submitShow = function(event) {
+  event.preventDefault();
+  $('#submit-container').toggle();
+}
+
+HaxorNews.addArticle = function(event) {
+  var $form = $(this),
+    $title = $form.find('input[name="article[title]"]'),
+    $url = $form.find('input[name="article[url]"]');
+
+  event.preventDefault();
+  $('p.notice p.alert').html('');
+
+  console.log('test')
+
+  $.ajax({
+    method: 'POST',
+    url: HaxorNews.rootUrl + $form.attr('action'),
+    dataType: 'json',
+    data: { backdoor_user_id: 5, article: { title: $title.val(), url: $url.val() } }
+  }).done(function(response){
+    console.log(response);
+    $title.val('');
+    $url.val('');
+    $('p.notice').html('Article saved!');
+    HaxorNews.articles.push(response.article);
+    HaxorNews.articles.sort(HaxorNews.compare);
+    HaxorNews.renderArticles(HaxorNews.articles);
+  }).fail(function(response){
+    console.log(response.responseJSON.errors)
+    $('p.alert').html(HaxorNews.printError(response.responseJSON.errors));
+  });
+};
+
+// For sorting the articles
+
+HaxorNews.compare = function (a, b) {
+  if (a.score > b.score )
+     return -1;
+  if (a.score < b.score )
+     return 1;
+  // a must be equal to b
+  return 0;
+}
+
+HaxorNews.printError = function(errors) {
+  var error = '';
+
+  if (errors.title ) {
+    error = error + 'Title: ' + errors.title[0];
+  }
+  if ( errors.url ){
+    error = error + ' Url: ' + errors.url[0];
+  }
+
+  return error;
+}
+
+
+// Comments
 
 HaxorNews.showComment = function(event){
   var $commentList = $(event.target).parent().parent().find('.comment_list');
@@ -72,6 +140,7 @@ HaxorNews.renderComments = function(comments, $list) {
         '<textarea id="comment_body" name="comment[body]" placeholder="Enter comment..."></textarea>' +
         '<input name="commit" type="submit" value="Add Comment" />' +
       '</form>';
+    $list.empty();
     $list.append('<button>Hide</button>').click(HaxorNews.removeComments);
     $list.append(formString);
 
