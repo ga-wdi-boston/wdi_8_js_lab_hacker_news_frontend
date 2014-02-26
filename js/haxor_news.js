@@ -11,7 +11,9 @@ HaxorNews.init = function() {
 };
 
 HaxorNews.callArticles = function(){
-  console.log('called!');
+
+  $('p.notice, p.alert').html('');
+
   $.ajax({
     type: 'GET',
     url: HaxorNews.rootUrl + 'articles',
@@ -30,7 +32,6 @@ HaxorNews.renderArticles = function(articles){
     $list = $('#article_list');
 
   $list.empty();
-  $('p.notice p.alert').html('');
 
   for (; i < length; ) {
     $list.append(this.renderArticle(articles[i]));
@@ -48,7 +49,7 @@ HaxorNews.renderArticle = function(article){
   htmlString = htmlString + '<p>' + article.score + ' points by ' + article.user_email
     + ' about ' + hoursAgo + ' hours ago | '
     + '<a href="' + HaxorNews.rootUrl + 'articles/' + article.id + '/vote?direction=up" id="vote_up">Upvote</a> | '
-    + '<a href="' + HaxorNews.rootUrl + 'articles/' + article.id + '/vote?direction=down" id="vote_up">Downvote</a> | '
+    + '<a href="' + HaxorNews.rootUrl + 'articles/' + article.id + '/vote?direction=down" id="vote_down">Downvote</a> | '
     + '<a href="' + HaxorNews.rootUrl + 'articles/'+ article.id +'/comments" id="comments">' + article.comments_count + ' comments</a></p>';
   $article = $('<div class="article">').append(htmlString).append($('<div class="comment_list">'));
 
@@ -66,10 +67,10 @@ HaxorNews.addArticle = function(event) {
     $url = $form.find('input[name="article[url]"]');
 
   event.preventDefault();
-  $('p.notice p.alert').html('');
+  $('p.notice, p.alert').html('');
 
   $.ajax({
-    method: 'POST',
+    type: 'POST',
     url: HaxorNews.rootUrl + $form.attr('action'),
     dataType: 'json',
     data: { backdoor_user_id: 5, article: { title: $title.val(), url: $url.val() } }
@@ -88,32 +89,66 @@ HaxorNews.addArticle = function(event) {
 };
 
 HaxorNews.voteUpArticle = function(event) {
-
+  var index = $(event.target).parent().parent().index(),
+    article;
   event.preventDefault();
 
-  $('p.notice p.alert').html('');
+  $('p.notice, p.alert').html('');
 
   $.ajax({
-    method: 'POST',
-    url: HaxorNews.rootUrl + $form.attr('action'),
+    type: 'PATCH',
+    url: $(event.target).attr('href'),
     dataType: 'json',
-    data: { backdoor_user_id: 5, article: { title: $title.val(), url: $url.val() } }
+    data: { backdoor_user_id: 5, direction: 'up' }
   }).done(function(response){
-    console.log(response);
-    $title.val('');
-    $url.val('');
-    $('p.notice').html('Article saved!');
-    HaxorNews.articles.push(response.article);
+    article = HaxorNews.articles[index];
+    if ( article.score === response.vote.votable_score ) {
+      $('p.alert').html('Already voted up!');
+      return false;
+    } else {
+      $('p.notice').html('Article voted up!');
+    }
+    article.score = response.vote.votable_score;
     HaxorNews.articles.sort(HaxorNews.compare);
     HaxorNews.renderArticles(HaxorNews.articles);
   }).fail(function(response){
-    console.log(response.responseJSON.errors)
     $('p.alert').html(HaxorNews.printError(response.responseJSON.errors));
   });
+
+  return false;
+};
+
+HaxorNews.voteDownArticle = function(event) {
+  var index = $(event.target).parent().parent().index(),
+    article;
+  event.preventDefault();
+
+  $('p.notice, p.alert').html('');
+
+  $.ajax({
+    type: 'PATCH',
+    url: $(event.target).attr('href'),
+    dataType: 'json',
+    data: { backdoor_user_id: 5, direction: 'down' }
+  }).done(function(response){
+    article = HaxorNews.articles[index];
+    if ( article.score === response.vote.votable_score ) {
+      $('p.alert').html('Already voted down!');
+      return false;
+    } else {
+      $('p.notice').html('Article voted down!');
+    }
+    article.score = response.vote.votable_score;
+    HaxorNews.articles.sort(HaxorNews.compare);
+    HaxorNews.renderArticles(HaxorNews.articles);
+  }).fail(function(response){
+    $('p.alert').html(HaxorNews.printError(response.responseJSON.errors));
+  });
+
+  return false;
 };
 
 // For sorting the articles
-
 HaxorNews.compare = function (a, b) {
   if (a.score > b.score )
      return -1;
@@ -147,6 +182,14 @@ HaxorNews.printError = function(errors) {
 HaxorNews.showComment = function(event){
   var $commentList = $(event.target).parent().parent().find('.comment_list');
   event.preventDefault();
+
+  if (event.target.id === 'vote_up') {
+    HaxorNews.voteUpArticle(event);
+    return false;
+  } else if (event.target.id === 'vote_down') {
+    HaxorNews.voteDownArticle(event);
+    return false;
+  }
   $.ajax({
     type: 'GET',
     url: $(event.target).attr('href'),
@@ -156,6 +199,8 @@ HaxorNews.showComment = function(event){
       HaxorNews.renderComments(response.comments, $commentList);
     }
   });
+
+  return false;
 };
 
 HaxorNews.renderComments = function(comments, $list) {
@@ -197,6 +242,8 @@ HaxorNews.renderComment = function(comment) {
 HaxorNews.removeComments = function(event) {
   event.preventDefault();
   $(event.target).parent().empty();
+
+  return false;
 }
 
 
