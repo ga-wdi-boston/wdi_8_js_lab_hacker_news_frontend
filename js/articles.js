@@ -1,6 +1,6 @@
 var AJAXer = {};
 
-AJAXer.article = function(responseObj) {
+AJAXer.Article = function(responseObj) {
   this.commentsCount = responseObj.comments_count
   this.createdAt     = responseObj.created_at || new Date();
   this.currentVote   = responseObj.current_vote;
@@ -35,7 +35,7 @@ AJAXer.getArticles = function() {
     var currArticle;
     AJAXer.allArticles = [];
     $.each(response.articles, function(index, article) {
-      currArticle = new AJAXer.article(article);
+      currArticle = new AJAXer.Article(article);
       AJAXer.allArticles.push(currArticle);
     });
     AJAXer.renderAll();
@@ -100,7 +100,7 @@ AJAXer.newArticle = function() {
     data: {backdoor_user_id: 2, article: {title: $title.val(), url: $url.val()}},
   })
   .done(function(response) {
-    var newArticle = new AJAXer.article(response.article)
+    var newArticle = new AJAXer.Article(response.article)
     AJAXer.allArticles.push(newArticle);
     $title.val("");
     $url.val("");
@@ -129,8 +129,7 @@ AJAXer.reportError = function(response) {
 AJAXer.renderAll = function() {
   var $articlesList = $("#articles-list");
 
-  (function() {
-    AJAXer.allArticles.sort(function(a, b) {
+  AJAXer.allArticles.sort(function(a, b) {
       if (a.score > b.score) {
         return -1;
       } else if (a.score < b.score) {
@@ -138,8 +137,7 @@ AJAXer.renderAll = function() {
       } else {
         return 0;
       }
-    });
-  })();
+  });
 
   $articlesList.empty();
 
