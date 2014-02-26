@@ -2,3 +2,7 @@
 #submit-container {
   display: none;
 }
+
+.alert {
+  color: red;
+}

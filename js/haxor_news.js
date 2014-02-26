@@ -68,7 +68,30 @@ HaxorNews.addArticle = function(event) {
   event.preventDefault();
   $('p.notice p.alert').html('');
 
-  console.log('test')
+  $.ajax({
+    method: 'POST',
+    url: HaxorNews.rootUrl + $form.attr('action'),
+    dataType: 'json',
+    data: { backdoor_user_id: 5, article: { title: $title.val(), url: $url.val() } }
+  }).done(function(response){
+    console.log(response);
+    $title.val('');
+    $url.val('');
+    $('p.notice').html('Article saved!');
+    HaxorNews.articles.push(response.article);
+    HaxorNews.articles.sort(HaxorNews.compare);
+    HaxorNews.renderArticles(HaxorNews.articles);
+  }).fail(function(response){
+    console.log(response.responseJSON.errors)
+    $('p.alert').html(HaxorNews.printError(response.responseJSON.errors));
+  });
+};
+
+HaxorNews.voteUpArticle = function(event) {
+
+  event.preventDefault();
+
+  $('p.notice p.alert').html('');
 
   $.ajax({
     method: 'POST',
@@ -101,17 +124,22 @@ HaxorNews.compare = function (a, b) {
 }
 
 HaxorNews.printError = function(errors) {
-  var error = '';
+  var error = '',
+    errorTypes = Object.keys(errors),
+    length = errorTypes.length,
+    i = 0,
+    type;
 
-  if (errors.title ) {
-    error = error + 'Title: ' + errors.title[0];
-  }
-  if ( errors.url ){
-    error = error + ' Url: ' + errors.url[0];
+  for (; i < length; ) {
+    type = errorTypes[i];
+    error = error + type + ' ' + errors[type] + '; ';
+    i = i + 1;
   }
 
   return error;
 }
+
+
 
 
 // Comments
