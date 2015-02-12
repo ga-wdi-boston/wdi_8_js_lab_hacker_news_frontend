@@ -6,9 +6,29 @@
   <link rel="stylesheet" href="./css/style.css">
   <script src="https://code.jquery.com/jquery-2.1.0.js"></script>
   <script src="http://embeddedjavascript.googlecode.com/files/ejs_production.js"></script>
+  <script src="./js/haxor_news.js"></script>
   <script src="./js/main.js"></script>
 </head>
 <body>
-
+  <h1>Haxor News</h1>
+  <p class="notice"></p>
+  <p class="alert"></p>
+  <a href="#" id="submit-show">New article</a>
+  <div id="submit-container">
+    <h2>Submit article</h2>
+    <form accept-charset="UTF-8" action="articles" class="new_article" id="new_article" method="post"><div style="margin:0;padding:0;display:inline"><input name="utf8" type="hidden" value="&#x2713;" /><input name="authenticity_token" type="hidden" value="vJ9r+rQWBV/Ceyq3kSX9ncHcRhUJoldb3Xl1aJ/g+Xs=" /></div>
+      <div>
+        <label for="article_title">Title</label>
+        <input id="article_title" name="article[title]" type="text" />
+      </div>
+      <div>
+        <label for="article_url">URL</label>
+        <input id="article_url" name="article[url]" type="text" />
+      </div>
+      <input name="commit" type="submit" value="Create Article" />
+    </form>
+  </div>
+  <a href="#" id="get_articles">Reload Articles</a>
+  <div id="article_list"></div>
 </body>
 </html>

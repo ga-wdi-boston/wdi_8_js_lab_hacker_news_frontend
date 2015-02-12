@@ -1,1 +1,12 @@
 /* Put any styles you'd like to apply in here */
+#submit-container {
+  display: none;
+}
+
+.alert {
+  color: red;
+}
+
+.notice {
+  color: green;
+}
