@@ -1,1 +1,8 @@
 /* Put any styles you'd like to apply in here */
+* {
+  font-family: 'Helvetica Neue', Helvetica, arial, sans-serif;
+}
+
+.article-links {
+  color: tomato;
+}

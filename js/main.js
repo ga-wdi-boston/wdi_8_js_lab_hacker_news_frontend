@@ -1,4 +1,5 @@
 $(document).ready(function() {
-  // Put any document-ready code in here
-  // Other code should go in separate files organized by namespace/class
+  AJAXer.getArticles();
+  $("#reload-all").click(AJAXer.getArticles);
+  $("#submit-article").click(AJAXer.newArticle);
 });

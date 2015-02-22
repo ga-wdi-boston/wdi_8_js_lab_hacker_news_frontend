@@ -6,9 +6,22 @@
   <link rel="stylesheet" href="./css/style.css">
   <script src="https://code.jquery.com/jquery-2.1.0.js"></script>
   <script src="http://embeddedjavascript.googlecode.com/files/ejs_production.js"></script>
+  <script src="./js/articles.js"></script>
   <script src="./js/main.js"></script>
 </head>
 <body>
-
+  <button id="reload-all" class="btn btn-info">Refresh Articles</button>
+  <form id="new-article" method="POST", action="http://haxor-news-json.herokuapp.com/articles">
+    <input id="new-title" placeholder="Title">
+    <input id="new-url" placeholder="URL">
+    <input type="submit" id="submit-article" value="Submit Article">
+  </form>
+  <div id="errors">
+  </div>
+  <div class="article-container">
+    <h1>All Articles</h1>
+    <ul id="articles-list">
+    </ul>
+  </div>
 </body>
 </html>
