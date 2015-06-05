@@ -7,8 +7,25 @@
   <script src="https://code.jquery.com/jquery-2.1.0.js"></script>
   <script src="http://embeddedjavascript.googlecode.com/files/ejs_production.js"></script>
   <script src="./js/main.js"></script>
+  <script src="./js/article_list.js"></script>
+  <script src="./js/article.js"></script>
 </head>
 <body>
-
+<div id="container">
+	<div id="header">
+		<h1>Haxor News</h1>
+		<button id="reload">Reload Articles</button>
+		<div id="new_article">
+			<h2>Submit an article</h2>
+			<form action="http://haxor-news-json.herokuapp.com/articles" method="POST" id='new_article_form'>
+				<input type="text" id="new_title" placeholder="Title">
+				<input type="text" id="new_url" placeholder="URL">
+				<input type="submit">
+			</form>
+		</div>
+	</div>
+	<div id="content">
+	</div>
+</div>
 </body>
 </html>

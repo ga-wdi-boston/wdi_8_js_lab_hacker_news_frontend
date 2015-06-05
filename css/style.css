@@ -1,1 +1,19 @@
 /* Put any styles you'd like to apply in here */
+.red {
+	color: red;
+}
+
+span.small {
+	display: block;
+	font-size: 12px;
+	font-style: italic;
+}
+
+a {
+	cursor: pointer;
+}
+
+.vote {
+	margin: 0 5px;
+	color: blue;
+}
